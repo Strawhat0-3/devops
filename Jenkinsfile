@@ -2,7 +2,8 @@ pipeline {
   agent any
 
   environment {
-    COMPOSE_CMD = "docker-compose -f docker-compose.yml"
+    VOTE_PORT = '5000'
+    RESULT_PORT = '5001'
   }
 
   stages {
@@ -14,19 +15,20 @@ pipeline {
 
     stage('Build des images Docker') {
       steps {
-        sh "${COMPOSE_CMD} build"
+        sh 'docker-compose build'
       }
     }
 
     stage('Lancer l’application') {
       steps {
-        sh "${COMPOSE_CMD} up -d"
+        sh 'docker-compose up -d'
       }
     }
 
     stage('Vérification des services') {
       steps {
-        sh "${COMPOSE_CMD} ps"
+        sh 'docker-compose ps'
+        sh 'docker ps'
       }
     }
   }
