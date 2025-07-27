@@ -78,9 +78,9 @@ services:
       db:
         condition: service_healthy
     ports:
-      - "5001:80"
+      - "${RESULT_PORT}:80"
     environment:
-      DB_HOST: db
+      DB_HOST: ${DB_HOST}
     restart: unless-stopped
 
   worker:
@@ -95,8 +95,8 @@ services:
       db:
         condition: service_healthy
     environment:
-      REDIS_HOST: redis
-      DB_HOST: db
+      REDIS_HOST: ${REDIS_HOST}
+      DB_HOST: ${DB_HOST}
     restart: unless-stopped
 
 volumes:
