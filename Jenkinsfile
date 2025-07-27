@@ -9,7 +9,7 @@ pipeline {
   stages {
     stage('Cloner le dépôt') {
       steps {
-        git url: 'https://github.com/Strawhat0-3/devops'
+        git branch: 'main', url: 'https://github.com/Strawhat0-3/devops'
       }
     }
 
