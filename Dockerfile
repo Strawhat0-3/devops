@@ -13,8 +13,31 @@ RUN apt-get update && \
     apt-get clean && \
     rm -rf /var/lib/apt/lists/*
 
-# Set correct permissions
-RUN chown -R jenkins:jenkins /var/jenkins_home
-
 USER jenkins
 
+# Install Jenkins plugins
+RUN jenkins-plugin-cli --plugins \
+    workflow-aggregator \
+    pipeline-stage-view \
+    docker-workflow \
+    git \
+    github \
+    blueocean \
+    pipeline-build-step \
+    pipeline-input-step \
+    pipeline-milestone-step \
+    pipeline-model-definition \
+    pipeline-stage-step \
+    workflow-basic-steps \
+    workflow-cps \
+    workflow-durable-task-step \
+    workflow-job \
+    workflow-multibranch \
+    workflow-scm-step \
+    workflow-step-api \
+    workflow-support
+
+# Set correct permissions
+USER root
+RUN chown -R jenkins:jenkins /var/jenkins_home
+USER jenkins
