@@ -5,13 +5,13 @@ networks:
     driver: bridge
     ipam:
       config:
-        - subnet: 172.20.0.0/24
+        - subnet: 172.25.0.0/24  # Changed from 172.20.0.0/24
 
   back-tier:
     driver: bridge
     ipam:
       config:
-        - subnet: 172.21.0.0/24
+        - subnet: 172.26.0.0/24  # Changed from 172.21.0.0/24
 
 services:
   redis:
