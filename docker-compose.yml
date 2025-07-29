@@ -13,13 +13,6 @@ networks:
       config:
         - subnet: 172.21.0.0/24
 
-  data-tier:
-    driver: bridge
-    internal: true
-    ipam:
-      config:
-        - subnet: 172.22.0.0/24
-
 services:
   redis:
     image: redis:alpine
@@ -37,8 +30,7 @@ services:
     image: postgres:13
     container_name: postgres
     networks:
-      - back-tier  # Change from data-tier to back-tier
-      - data-tier  # Keep this if worker/result need it
+      - back-tier  # Database on back-tier network
     environment:
       POSTGRES_USER: ${POSTGRES_USER}
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
@@ -56,9 +48,8 @@ services:
     build: ./vote
     container_name: vote_app
     networks:
-      - front-tier
-      - back-tier
-      - data-tier
+      - front-tier  # Exposed to users
+      - back-tier   # Can access Redis and DB
     depends_on:
       redis:
         condition: service_healthy
@@ -75,8 +66,8 @@ services:
     build: ./result
     container_name: result_app
     networks:
-      - front-tier
-      - data-tier
+      - front-tier  # Exposed to users
+      - back-tier   # Can access DB
     depends_on:
       db:
         condition: service_healthy
@@ -90,8 +81,7 @@ services:
     build: ./worker
     container_name: worker_app
     networks:
-      - back-tier
-      - data-tier
+      - back-tier   # Can access Redis and DB (no front-tier needed)
     depends_on:
       redis:
         condition: service_healthy
@@ -110,7 +100,8 @@ services:
       - "8080:8080"
       - "50000:50000"
     networks:
-      - front-tier
+      - front-tier  # Only needs front-tier access
+      - back-tier   # Added back-tier for Docker socket access if needed
     volumes:
       - jenkins_home:/var/jenkins_home
       - /var/run/docker.sock:/var/run/docker.sock
@@ -122,4 +113,4 @@ volumes:
   postgres_data:
   jenkins_home:
     external: true 
-    name: jenkins_home 
+    name: jenkins_home
