@@ -18,35 +18,9 @@ pipeline {
       }
     }
 
-    stage('Cleanup Previous Run') {
-      steps {
-        sh '''
-          echo "=== Nettoyage des conteneurs précédents ==="
-          docker compose down --remove-orphans || true
-          docker system prune -f || true
-        '''
-      }
-    }
-
     stage('Cloner le dépôt') {
       steps {
         git branch: 'main', url: 'https://github.com/Strawhat0-3/devops'
-      }
-    }
-
-    stage('Verify Environment') {
-      steps {
-        sh '''
-          echo "=== Vérification du fichier .env ==="
-          if [ -f .env ]; then
-            echo " Fichier .env trouvé"
-            echo "Contenu (masqué pour sécurité):"
-            sed 's/=.*/=***/' .env
-          else
-            echo " Fichier .env manquant"
-            exit 1
-          fi
-        '''
       }
     }
 
