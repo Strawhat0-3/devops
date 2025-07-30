@@ -5,13 +5,13 @@ networks:
     driver: bridge
     ipam:
       config:
-        - subnet: 172.25.0.0/24  # Changed from 172.20.0.0/24
+        - subnet: 172.25.0.0/24  
 
   back-tier:
     driver: bridge
     ipam:
       config:
-        - subnet: 172.26.0.0/24  # Changed from 172.21.0.0/24
+        - subnet: 172.26.0.0/24  
 
 services:
   redis:
@@ -30,7 +30,7 @@ services:
     image: postgres:13
     container_name: postgres
     networks:
-      - back-tier  # Database on back-tier network
+      - back-tier  
     environment:
       POSTGRES_USER: ${POSTGRES_USER}
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
@@ -48,8 +48,8 @@ services:
     build: ./vote
     container_name: vote_app
     networks:
-      - front-tier  # Exposed to users
-      - back-tier   # Can access Redis and DB
+      - front-tier  # Visible par les utilisateurs
+      - back-tier   # Accès à Redis et BDD
     depends_on:
       redis:
         condition: service_healthy
@@ -66,8 +66,8 @@ services:
     build: ./result
     container_name: result_app
     networks:
-      - front-tier  # Exposed to users
-      - back-tier   # Can access DB
+      - front-tier  # Visible par les utilisateurs
+      - back-tier   # Accès à la BDD
     depends_on:
       db:
         condition: service_healthy
@@ -81,7 +81,7 @@ services:
     build: ./worker
     container_name: worker_app
     networks:
-      - back-tier   # Can access Redis and DB (no front-tier needed)
+      - back-tier   # Accès Redis et BDD
     depends_on:
       redis:
         condition: service_healthy
